@@ -35,7 +35,7 @@ for i = 1:size(A,3)
     beta(:,:,i) = calculate_log(B(1:3,1:3,i));
     alpha_vet(:,:,i) = extract_vect(alpha(:,:,i));
     beta_vet(:,:,i) = extract_vect(beta(:,:,i));
-    if (abs(norm(alpha_vet(:,:,i))-norm(beta_vet(:,:,i)))<0.0001)
+    if (abs(norm(alpha_vet(:,:,i))-norm(beta_vet(:,:,i)))<0.0001)  % 0.0001 is a scalar to control the quality of the two vector.
     t_ = beta(:,:,i)*alpha(:,:,i)';
     if (~isnan(t_(1)))
         ind = [ind,i];
@@ -66,33 +66,4 @@ function alpha = calculate_log(R)
 trace_ = R(1,1)+R(2,2)+R(3,3);
 psi = acos((trace_-1)/2);
 alpha = psi*(R-R')/(2*sin(psi));
-end
-
-
-function [x] = importfile(workbookFile,sheetName,startRow,endRow)
-if nargin == 1 || isempty(sheetName)
-    sheetName = 1;
-end
-
-% If row start and end points are not specified, define defaults
-if nargin <= 3
-    startRow = 2;
-    endRow = 10;
-end
-
-%% Import the data
-data = xlsread(workbookFile, sheetName, sprintf('A%d:F%d',startRow(1),endRow(1)));
-for block=2:length(startRow)
-    tmpDataBlock = xlsread(workbookFile, sheetName, sprintf('A%d:F%d',startRow(block),endRow(block)));
-    data = [data;tmpDataBlock]; %#ok<AGROW>
-end
-
-%% Allocate imported array to column variable names
-TX = data(:,1);
-TY = data(:,2);
-TZ = data(:,3);
-RX = data(:,4);
-RY = data(:,5);
-RZ = data(:,6);
-x = [TX,TY,TZ,RX,RY,RZ];
 end
